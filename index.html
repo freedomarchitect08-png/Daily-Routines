@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2d5a3d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Routines">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>My Daily Routines</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+:root {
+  --navy: #2d5a3d;
+  --navy-mid: #3d7a54;
+  --navy-light: #5a9e72;
+  --gold: #b8860b;
+  --gold-light: #d4a017;
+  --gold-pale: #f5e9c0;
+  --ivory: #f6faf4;
+  --ivory-dark: #e4f0e0;
+  --text-dark: #1a2e1e;
+  --text-mid: #3a5c42;
+  --text-muted: #7a9880;
+  --white: #ffffff;
+  --surface: #ffffff;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html { height: 100%; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--ivory);
+  min-height: 100%;
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
+
+/* ── TOP HEADER BAR ── */
+.app-header {
+  background: var(--navy);
+  padding: calc(var(--safe-top) + 16px) 20px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-header-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-logo {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold-light);
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+.app-logo span { color: rgba(255,255,255,0.5); font-size: 12px; letter-spacing: 3px; text-transform: uppercase; display: block; font-family: 'Lato', sans-serif; font-weight: 300; margin-bottom: 2px; }
+.header-date { color: rgba(255,255,255,0.55); font-size: 12px; letter-spacing: 1px; text-align: right; }
+
+/* ── QUOTE BANNER ── */
+.quote-banner {
+  background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy) 100%);
+
+  border-bottom: 1px solid rgba(201,151,26,0.25);
+  padding: 16px 20px;
+}
+.quote-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.quote-mark {
+  color: var(--gold);
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: -4px;
+  opacity: 0.7;
+}
+.quote-text { color: rgba(255,255,255,0.88); font-size: 13px; line-height: 1.6; font-style: italic; font-family: 'Playfair Display', serif; }
+.quote-author { color: var(--gold-light); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; font-style: normal; font-family: 'Lato', sans-serif; font-weight: 700; }
+
+/* ── NAV TABS ── */
+.nav-tabs {
+  background: var(--navy);
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 20px 12px;
+  position: sticky;
+  top: 64px;
+  z-index: 99;
+}
+.nav-tab {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
+  font-family: 'Lato', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 700;
+}
+.nav-tab.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+}
+.nav-tab:hover:not(.active) { background: rgba(255,255,255,0.14); color: rgba(255,255,255,0.85); }
+
+/* ── MAIN CONTENT ── */
+.main { max-width: 800px; margin: 0 auto; padding: 20px 16px calc(var(--safe-bottom) + 24px); }
+
+/* ── VIEW PANELS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── CARDS WRAP ── */
+.cards-wrap { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  width: 360px;
+  padding: 26px 24px 20px;
+  box-shadow: 0 2px 20px rgba(13,27,62,0.07);
+  border: 1px solid var(--ivory-dark);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+.card:nth-child(2) { animation-delay: 0.08s; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+.card.day::before { background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold)); }
+.card.night::before { background: linear-gradient(90deg, var(--navy), var(--navy-light), var(--navy)); }
+
+.card-header { margin-bottom: 18px; }
+.card-icon { font-size: 24px; margin-bottom: 6px; display: block; }
+.card-acronym { font-family: 'Playfair Display', serif; font-size: 26px; letter-spacing: 5px; font-weight: 700; line-height: 1; }
+.card.day .card-acronym { color: var(--gold); }
+.card.night .card-acronym { color: var(--navy); }
+.card-subtitle { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-top: 4px; font-weight: 700; }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 9px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: background 0.15s; user-select: none;
+}
+.checklist li:hover { background: var(--ivory); }
+.checklist li.done { opacity: 0.38; }
+.checklist li.done .item-text { text-decoration: line-through; }
+
+.check-box {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid #ddd; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; font-size: 11px; color: #fff;
+}
+.card.day .checklist li.done .check-box { background: var(--gold); border-color: var(--gold); }
+.card.night .checklist li.done .check-box { background: var(--navy); border-color: var(--navy); }
+
+.item-letter { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; min-width: 14px; flex-shrink: 0; margin-top: 2px; }
+.card.day .item-letter { color: var(--gold); }
+.card.night .item-letter { color: var(--navy-light); }
+
+.item-text-wrap { flex: 1; }
+.item-text { font-size: 13px; color: var(--text-dark); line-height: 1.4; }
+.item-text strong { display: block; font-weight: 700; }
+.item-text span { font-size: 11px; color: var(--text-muted); font-weight: 300; }
+
+.edit-item-input {
+  display: none; width: 100%; border: 1px solid var(--gold); border-radius: 4px;
+  padding: 4px 8px; font-family: 'Lato', sans-serif; font-size: 13px;
+  font-weight: 700; color: var(--text-dark); background: var(--ivory);
+  outline: none;
+}
+.edit-item-input.visible { display: block; }
+.item-edit-btn {
+  background: none; border: none; cursor: pointer; padding: 2px 4px;
+  color: var(--text-muted); font-size: 14px; opacity: 0; transition: opacity 0.15s;
+  flex-shrink: 0; margin-top: 2px;
+}
+.checklist li:hover .item-edit-btn { opacity: 1; }
+.edit-mode .item-edit-btn { opacity: 1 !important; }
+
+/* ── PROGRESS ── */
+.progress-wrap { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--ivory-dark); }
+.progress-label { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 7px; }
+.progress-bar { height: 3px; background: var(--ivory-dark); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0%; border-radius: 2px; transition: width 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+.card.day .progress-fill { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.card.night .progress-fill { background: linear-gradient(90deg, var(--navy), var(--navy-light)); }
+
+/* ── COMPLETION BANNER ── */
+.done-banner {
+  display: none; margin-top: 12px; padding: 9px 14px;
+  border-radius: var(--radius-sm); text-align: center;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
+  animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.card.day .done-banner { background: #fdf3d8; color: var(--gold); }
+.card.night .done-banner { background: #e8ecf8; color: var(--navy); }
+
+/* ── CARD FOOTER ── */
+.card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 8px; }
+.streak-badge { font-size: 11px; color: var(--text-muted); }
+.streak-badge strong { color: var(--text-dark); }
+.card-actions { display: flex; gap: 6px; }
+
+.btn-sm {
+  background: none; border: 1px solid var(--ivory-dark);
+  color: var(--text-muted); font-family: 'Lato', sans-serif;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 4px; cursor: pointer; transition: all 0.15s;
+  font-weight: 700;
+}
+.btn-sm:hover { background: var(--ivory); color: var(--text-dark); }
+.btn-sm.edit-active { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+.btn-sm.add-btn { border-style: dashed; }
+
+/* ── WEEKLY VIEW ── */
+.weekly-wrap { display: flex; flex-direction: column; gap: 24px; }
+
+.weekly-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 2px 20px rgba(13,27,62,0.07);
+  border: 1px solid var(--ivory-dark);
+  animation: fadeUp 0.35s ease both;
+}
+.weekly-card:nth-child(2) { animation-delay: 0.06s; }
+
+.weekly-title { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+.weekly-title .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot-day { background: var(--gold); }
+.dot-night { background: #2d5a3d; }
+
+.week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.day-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.day-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; }
+.day-dot {
+  width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--ivory-dark);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  position: relative; transition: all 0.2s;
+}
+.day-dot.today { border-color: var(--gold); color: var(--text-dark); }
+.day-dot.complete-full { background: var(--gold); border-color: var(--gold); color: var(--white); }
+.day-dot.complete-partial { background: var(--ivory-dark); border-color: var(--gold); color: var(--text-dark); }
+.night-card .day-dot.complete-full { background: var(--navy); border-color: var(--navy); color: var(--white); }
+.night-card .day-dot.complete-partial { border-color: var(--navy); }
+.night-card .day-dot.today { border-color: var(--navy); }
+
+.week-stat { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--ivory-dark); display: flex; gap: 20px; }
+.stat-item { display: flex; flex-direction: column; gap: 2px; }
+.stat-val { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+.stat-lbl { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+.day-card .stat-val { color: var(--gold); }
+.night-card .stat-val { color: var(--navy); }
+
+/* ── INSTALL PROMPT ── */
+.install-banner {
+  display: none;
+  background: var(--navy);
+  color: white;
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  animation: fadeUp 0.4s ease;
+}
+.install-banner.hidden { display: none !important; }
+.install-text { font-size: 13px; line-height: 1.4; }
+.install-text strong { color: var(--gold-light); display: block; font-size: 14px; margin-bottom: 2px; }
+.install-text span { color: rgba(255,255,255,0.7); font-size: 12px; }
+.install-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-install {
+  background: var(--gold); color: var(--navy); border: none;
+  font-family: 'Lato', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 16px;
+  border-radius: 6px; cursor: pointer; white-space: nowrap;
+}
+.btn-dismiss { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); border: none; font-size: 18px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+
+/* ── IOS INSTALL INSTRUCTIONS ── */
+.ios-instructions {
+  display: none;
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  color: white;
+  animation: fadeUp 0.4s ease;
+}
+.ios-instructions.show { display: block; }
+.ios-instructions h3 { font-family: 'Playfair Display', serif; color: var(--gold-light); font-size: 15px; margin-bottom: 10px; }
+.ios-step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.85); padding: 5px 0; }
+.ios-num { background: var(--gold); color: var(--navy); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.ios-close { background: none; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 6px 14px; border-radius: 4px; cursor: pointer; margin-top: 12px; width: 100%; font-family: 'Lato', sans-serif; }
+
+/* RESPONSIVE */
+@media(max-width: 740px) {
+  .cards-wrap { flex-direction: column; align-items: center; }
+  .card { width: 100%; max-width: 430px; }
+  .weekly-card { padding: 18px 16px; }
+}
+
+@media(max-width: 380px) {
+  .week-grid { gap: 4px; }
+  .day-dot { width: 30px; height: 30px; font-size: 10px; }
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-header-inner">
+    <div class="app-logo">
+      <span>My Daily</span>
+      Routines ✦
+    </div>
+    <div class="header-date" id="header-date"></div>
+  </div>
+</header>
+
+<div class="quote-banner">
+  <div class="quote-inner">
+    <div class="quote-mark">"</div>
+    <div>
+      <div class="quote-text" id="quote-text"></div>
+      <div class="quote-author" id="quote-author"></div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav-tabs">
+  <button class="nav-tab active" onclick="showView('morning')">☀️ Morning</button>
+  <button class="nav-tab" onclick="showView('night')">🌙 Night</button>
+  <button class="nav-tab" onclick="showView('weekly')">🗓️ Week</button>
+</nav>
+
+<main class="main">
+
+  <!-- INSTALL BANNERS -->
+  <div class="install-banner hidden" id="install-android">
+    <div class="install-text">
+      <strong>Add to Home Screen</strong>
+      <span>Install for quick access every day</span>
+    </div>
+    <div class="install-actions">
+      <button class="btn-install" onclick="triggerInstall()">Install</button>
+      <button class="btn-dismiss" onclick="dismissInstall()">✕</button>
+    </div>
+  </div>
+
+  <div class="ios-instructions" id="install-ios">
+    <h3>Add to Your Home Screen</h3>
+    <div class="ios-step"><div class="ios-num">1</div>Tap the <strong style="color:var(--gold-light)">&nbsp;Share&nbsp;</strong> button at the bottom of Safari</div>
+    <div class="ios-step"><div class="ios-num">2</div>Scroll down and tap <strong style="color:var(--gold-light)">&nbsp;"Add to Home Screen"</strong></div>
+    <div class="ios-step"><div class="ios-num">3</div>Tap <strong style="color:var(--gold-light)">&nbsp;Add&nbsp;</strong> — done! 🎉</div>
+    <button class="ios-close" onclick="document.getElementById('install-ios').classList.remove('show')">Got it</button>
+  </div>
+
+  <!-- MORNING VIEW -->
+  <div class="view active" id="view-morning">
+    <div class="cards-wrap">
+      <div class="card day" id="card-day">
+        <div class="card-header">
+          <span class="card-icon">☀️</span>
+          <div class="card-acronym">R.E.S.T.E.R.S.</div>
+          <div class="card-subtitle">Morning Routine</div>
+        </div>
+        <ul class="checklist" id="list-day"></ul>
+        <div class="done-banner" id="done-day">You showed up today! ✦</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Progress</span><span id="count-day">0 / 0</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-day"></div></div>
+        </div>
+        <div class="card-footer">
+          <div class="streak-badge">Streak <strong id="streak-day">0</strong> days 🔥</div>
+          <div class="card-actions">
+            <button class="btn-sm add-btn" id="add-day-btn" onclick="addItem('day')" style="display:none">+ Add</button>
+            <button class="btn-sm" id="edit-day-btn" onclick="toggleEdit('day')">✏️ Edit</button>
+            <button class="btn-sm" onclick="resetCard('day')">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NIGHT VIEW -->
+  <div class="view" id="view-night">
+    <div class="cards-wrap">
+      <div class="card night" id="card-night">
+        <div class="card-header">
+          <span class="card-icon">🌙</span>
+          <div class="card-acronym">SLUMBERS</div>
+          <div class="card-subtitle">Bedtime Routine</div>
+        </div>
+        <ul class="checklist" id="list-night"></ul>
+        <div class="done-banner" id="done-night">Rest well — you earned it! ✦</div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Progress</span><span id="count-night">0 / 0</span></div>
+          <div class="progress-bar"><div class="progress-fill" id="fill-night"></div></div>
+        </div>
+        <div class="card-footer">
+          <div class="streak-badge">Streak <strong id="streak-night">0</strong> days 🔥</div>
+          <div class="card-actions">
+            <button class="btn-sm add-btn" id="add-night-btn" onclick="addItem('night')" style="display:none">+ Add</button>
+            <button class="btn-sm" id="edit-night-btn" onclick="toggleEdit('night')">✏️ Edit</button>
+            <button class="btn-sm" onclick="resetCard('night')">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY VIEW -->
+  <div class="view" id="view-weekly">
+    <div class="weekly-wrap">
+      <div class="weekly-card day-card">
+        <div class="weekly-title"><span class="dot dot-day"></span> R.E.S.T.E.R.S. — This Week</div>
+        <div class="week-grid" id="week-day"></div>
+        <div class="week-stat" id="weekstat-day"></div>
+      </div>
+      <div class="weekly-card night-card">
+        <div class="weekly-title"><span class="dot dot-night"></span> SLUMBERS — This Week</div>
+        <div class="week-grid" id="week-night"></div>
+        <div class="week-stat" id="weekstat-night"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── QUOTES ──
+const QUOTES = [
+  { text: "Discipline is choosing between what you want now and what you want most.", author: "Abraham Lincoln" },
+  { text: "You don't rise to the level of your goals. You fall to the level of your systems.", author: "James Clear" },
+  { text: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier" },
+  { text: "The secret of your future is hidden in your daily routine.", author: "Mike Murdock" },
+  { text: "Motivation gets you going. Habit gets you there.", author: "Zig Ziglar" },
+  { text: "Commit to the Lord whatever you do, and he will establish your plans.", author: "Proverbs 16:3" },
+  { text: "She is clothed with strength and dignity, and she laughs without fear of the future.", author: "Proverbs 31:25" },
+  { text: "Take care of your body. It's the only place you have to live.", author: "Jim Rohn" },
+  { text: "Your daily choices are the building blocks of your life's masterpiece.", author: "Terri Green" },
+  { text: "What you do every day matters more than what you do once in a while.", author: "Gretchen Rubin" },
+  { text: "The morning is the rudder of the day.", author: "Henry Ward Beecher" },
+  { text: "A good night's sleep is an act of self-love.", author: "Unknown" },
+  { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma" },
+  { text: "You are one routine away from changing your life.", author: "Terri Green" },
+  { text: "I can do all things through Christ who strengthens me.", author: "Philippians 4:13" },
+  { text: "Freedom begins with taking ownership of your day.", author: "Terri Green" },
+  { text: "Consistency is the hallmark of the unimaginative.", author: "Oscar Wilde" },
+  { text: "First forget inspiration. Habit is more dependable.", author: "Octavia Butler" },
+  { text: "Your future self is watching you right now through your memories.", author: "Aubrey de Grey" },
+  { text: "The groundwork for all happiness is good health.", author: "Leigh Hunt" },
+  { text: "Each day is a new opportunity to grow, heal, and become.", author: "Terri Green" },
+  { text: "Sleep is the golden chain that ties health and our bodies together.", author: "Thomas Dekker" },
+  { text: "Do something today that your future self will thank you for.", author: "Sean Patrick Flanery" },
+  { text: "In all things of nature there is something of the marvelous.", author: "Aristotle" },
+  { text: "Routine, in an intelligent person, is a sign of ambition.", author: "W.H. Auden" },
+  { text: "The secret to a rich life is to have more beginnings than endings.", author: "David Weinbaum" },
+  { text: "Trust in the Lord with all your heart and lean not on your own understanding.", author: "Proverbs 3:5" },
+  { text: "She believed she could, so she did.", author: "R.S. Grey" },
+  { text: "What gets scheduled gets done.", author: "Terri Green" },
+  { text: "You are the architect of your own destiny.", author: "Napoleon Hill" },
+  { text: "Excellence is not a singular act, but a habit.", author: "Aristotle" }
+];
+
+function getTodayQuote() {
+  const d = new Date();
+  const dayOfYear = Math.floor((d - new Date(d.getFullYear(),0,0))/(1000*60*60*24));
+  return QUOTES[dayOfYear % QUOTES.length];
+}
+const q = getTodayQuote();
+document.getElementById('quote-text').textContent = q.text;
+document.getElementById('quote-author').textContent = '— ' + q.author;
+
+// ── DATE ──
+function getDateStr() {
+  return new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+}
+function getTodayKey() { return new Date().toISOString().slice(0,10); }
+document.getElementById('header-date').textContent = getDateStr();
+
+// ── DEFAULT ITEMS ──
+const DEFAULT_ITEMS = {
+  day: [
+    { letter:'R', title:'Read', sub:'' },
+    { letter:'E', title:'Exercise', sub:'' },
+    { letter:'S', title:'Shower', sub:'' },
+    { letter:'T', title:'Tally', sub:'' },
+    { letter:'E', title:'Empower', sub:'' },
+    { letter:'R', title:'Refresh (Rest)', sub:'' },
+    { letter:'S', title:'Sleep', sub:'' }
+  ],
+  night: [
+    { letter:'S', title:'Stop Eating', sub:'3–4 hours before sleep' },
+    { letter:'L', title:'Let Go', sub:'Release stressful thoughts' },
+    { letter:'U', title:'Use Natural Sleep Aids', sub:'PRN' },
+    { letter:'M', title:'Map Out Your Next Day', sub:'' },
+    { letter:'B', title:'Boycott Blue Light', sub:'Turn off devices' },
+    { letter:'E', title:'Enter Bliss', sub:'Bedtime affirmations' },
+    { letter:'R', title:'Read a Book', sub:'Something that makes you feel good' },
+    { letter:'S', title:'Sleep Like a Baby', sub:'' }
+  ]
+};
+
+// ── STORAGE ──
+const SK = 'terri_routines_v2';
+function load() { try { return JSON.parse(localStorage.getItem(SK)) || {}; } catch(e) { return {}; } }
+function save(s) { try { localStorage.setItem(SK, JSON.stringify(s)); } catch(e) {} }
+
+function getCardState(card) {
+  const s = load(); const today = getTodayKey();
+  if (!s[card]) s[card] = {};
+  const c = s[card];
+  if (c.date !== today) { c.date = today; c.checked = []; c.completed = false; }
+  if (!c.items) c.items = JSON.parse(JSON.stringify(DEFAULT_ITEMS[card]));
+  if (!c.streak) c.streak = 0;
+  if (!c.history) c.history = {};
+  return c;
+}
+function saveCard(card, state) { const s = load(); s[card] = state; save(s); }
+
+// ── RENDER CHECKLIST ──
+function renderList(card) {
+  const cs = getCardState(card);
+  const ul = document.getElementById('list-' + card);
+  ul.innerHTML = '';
+  cs.items.forEach((item, i) => {
+    const done = cs.checked.includes(i);
+    const li = document.createElement('li');
+    if (done) li.classList.add('done');
+    li.innerHTML = `
+      <div class="check-box">${done ? '✓' : ''}</div>
+      <div class="item-letter">${item.letter}</div>
+      <div class="item-text-wrap">
+        <div class="item-text">
+          <strong class="item-label">${escHtml(item.title)}</strong>
+          ${item.sub ? `<span>${escHtml(item.sub)}</span>` : ''}
+        </div>
+        <input class="edit-item-input" type="text" value="${escHtml(item.title)}" data-idx="${i}" placeholder="Item name" />
+      </div>
+      <button class="item-edit-btn" onclick="startEditItem(event,'${card}',${i})" title="Edit">✏️</button>
+    `;
+    li.querySelector('.check-box').addEventListener('click', (e) => { e.stopPropagation(); toggleItem(card, i); });
+    li.querySelector('.item-text').addEventListener('click', () => toggleItem(card, i));
+    const input = li.querySelector('.edit-item-input');
+    input.addEventListener('keydown', (e) => { if(e.key==='Enter') saveEditItem(card, i, input.value); if(e.key==='Escape') cancelEditItem(card); });
+    input.addEventListener('blur', () => { if(input.classList.contains('visible')) saveEditItem(card, i, input.value); });
+    ul.appendChild(li);
+  });
+  updateProgress(card);
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── TOGGLE ITEM ──
+function toggleItem(card, idx) {
+  const cs = getCardState(card);
+  const editActive = document.getElementById('card-'+card).classList.contains('edit-mode');
+  if (editActive) return;
+  const pos = cs.checked.indexOf(idx);
+  if (pos === -1) cs.checked.push(idx); else cs.checked.splice(pos, 1);
+  const allDone = cs.checked.length === cs.items.length;
+  if (allDone && !cs.completed) {
+    cs.completed = true;
+    cs.streak = (cs.streak || 0) + 1;
+    cs.history[getTodayKey()] = 'full';
+  } else if (!allDone) {
+    if (cs.history[getTodayKey()] === 'full') cs.completed = false;
+    if (cs.checked.length > 0) cs.history[getTodayKey()] = 'partial';
+    else delete cs.history[getTodayKey()];
+  }
+  saveCard(card, cs);
+  renderList(card);
+}
+
+// ── PROGRESS ──
+function updateProgress(card) {
+  const cs = getCardState(card);
+  const done = cs.checked.length; const total = cs.items.length;
+  document.getElementById('count-'+card).textContent = done + ' / ' + total;
+  document.getElementById('fill-'+card).style.width = total ? Math.round(done/total*100)+'%' : '0%';
+  const banner = document.getElementById('done-'+card);
+  banner.style.display = done === total && total > 0 ? 'block' : 'none';
+  document.getElementById('streak-'+card).textContent = cs.streak || 0;
+}
+
+// ── RESET ──
+function resetCard(card) {
+  const cs = getCardState(card);
+  cs.checked = []; cs.completed = false;
+  if (cs.history[getTodayKey()]) delete cs.history[getTodayKey()];
+  saveCard(card, cs);
+  renderList(card);
+}
+
+// ── EDIT MODE ──
+function toggleEdit(card) {
+  const cardEl = document.getElementById('card-'+card);
+  const btn = document.getElementById('edit-'+card+'-btn');
+  const addBtn = document.getElementById('add-'+card+'-btn');
+  const editing = cardEl.classList.toggle('edit-mode');
+  btn.textContent = editing ? '✓ Done' : '✏️ Edit';
+  btn.classList.toggle('edit-active', editing);
+  addBtn.style.display = editing ? 'block' : 'none';
+  cardEl.querySelectorAll('.edit-item-input').forEach(inp => { if (!editing) inp.classList.remove('visible'); });
+}
+
+function startEditItem(e, card, idx) {
+  e.stopPropagation();
+  const cardEl = document.getElementById('card-'+card);
+  if (!cardEl.classList.contains('edit-mode')) return;
+  cardEl.querySelectorAll('.edit-item-input').forEach(i => i.classList.remove('visible'));
+  cardEl.querySelectorAll('.item-text').forEach(t => t.style.display = '');
+  const li = cardEl.querySelectorAll('li')[idx];
+  li.querySelector('.item-text').style.display = 'none';
+  const inp = li.querySelector('.edit-item-input');
+  inp.classList.add('visible');
+  inp.focus(); inp.select();
+}
+
+function saveEditItem(card, idx, val) {
+  const trimmed = val.trim();
+  if (!trimmed) return;
+  const cs = getCardState(card);
+  cs.items[idx].title = trimmed;
+  saveCard(card, cs);
+  renderList(card);
+  const cardEl = document.getElementById('card-'+card);
+  if (cardEl.classList.contains('edit-mode')) {
+    cardEl.querySelectorAll('.item-edit-btn').forEach(b => b.style.opacity = '1');
+  }
+}
+
+function cancelEditItem(card) {
+  const cardEl = document.getElementById('card-'+card);
+  cardEl.querySelectorAll('.edit-item-input').forEach(i => i.classList.remove('visible'));
+  cardEl.querySelectorAll('.item-text').forEach(t => t.style.display = '');
+}
+
+// ── ADD ITEM ──
+function addItem(card) {
+  const name = prompt('New item name:');
+  if (!name || !name.trim()) return;
+  const cs = getCardState(card);
+  const letter = name.trim()[0].toUpperCase();
+  cs.items.push({ letter, title: name.trim(), sub: '' });
+  saveCard(card, cs);
+  renderList(card);
+}
+
+// ── WEEKLY VIEW ──
+function renderWeekly() {
+  ['day','night'].forEach(card => {
+    const cs = getCardState(card);
+    const grid = document.getElementById('week-'+card);
+    const stat = document.getElementById('weekstat-'+card);
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - dayOfWeek);
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    let fullCount = 0; let partCount = 0;
+    grid.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
+      const key = d.toISOString().slice(0,10);
+      const isToday = key === getTodayKey();
+      const status = cs.history && cs.history[key];
+      if (status === 'full') fullCount++;
+      else if (status === 'partial') partCount++;
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      const dot = document.createElement('div');
+      dot.className = 'day-dot' + (isToday ? ' today' : '') + (status === 'full' ? ' complete-full' : status === 'partial' ? ' complete-partial' : '');
+      dot.textContent = d.getDate();
+      const lbl = document.createElement('div');
+      lbl.className = 'day-label';
+      lbl.textContent = days[i];
+      cell.appendChild(lbl);
+      cell.appendChild(dot);
+      grid.appendChild(cell);
+    }
+    stat.innerHTML = `
+      <div class="stat-item"><div class="stat-val">${fullCount}</div><div class="stat-lbl">Full days</div></div>
+      <div class="stat-item"><div class="stat-val">${partCount}</div><div class="stat-lbl">Partial</div></div>
+      <div class="stat-item"><div class="stat-val">${cs.streak||0}</div><div class="stat-lbl">Day streak</div></div>
+    `;
+  });
+}
+
+// ── VIEW SWITCHING ──
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const map = { morning: 0, night: 1, weekly: 2 };
+  document.querySelectorAll('.view')[map[name]].classList.add('active');
+  document.querySelectorAll('.nav-tab')[map[name]].classList.add('active');
+  if (name === 'weekly') renderWeekly();
+}
+
+// ── PWA INSTALL ──
+let deferredPrompt = null;
+function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream; }
+function isInStandaloneMode() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone; }
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!localStorage.getItem('pwa_dismissed')) {
+    document.getElementById('install-android').classList.remove('hidden');
+  }
+});
+
+function triggerInstall() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('install-android').classList.add('hidden'); });
+}
+function dismissInstall() {
+  document.getElementById('install-android').classList.add('hidden');
+  localStorage.setItem('pwa_dismissed', '1');
+}
+
+if (isIOS() && !isInStandaloneMode() && !localStorage.getItem('ios_instructions_shown')) {
+  setTimeout(() => {
+    document.getElementById('install-ios').classList.add('show');
+    localStorage.setItem('ios_instructions_shown', '1');
+  }, 1200);
+}
+
+// ── SERVICE WORKER ──
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// ── INIT ──
+renderList('day');
+renderList('night');
+</script>
+</body>
+</html>
